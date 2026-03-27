@@ -12,7 +12,7 @@ class PesowiseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pesowise',
+      title: "Hermyonie's Wallet",
       theme: PesowiseTheme.theme,
       debugShowCheckedModeBanner: false,
       home: const MainShell(),
