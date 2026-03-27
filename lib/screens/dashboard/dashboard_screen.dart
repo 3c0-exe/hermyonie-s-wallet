@@ -19,6 +19,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  // null = "All Wallets" (default), a wallet ID = filter to that wallet
   String? _selectedWalletId;
 
   @override
@@ -35,18 +36,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 final totalBalance = WalletService.getTotalBalance();
                 final wallets = WalletService.getAll();
 
-                // Auto-select first wallet if none selected or selection was deleted
-                if (wallets.isNotEmpty &&
-                    (_selectedWalletId == null ||
-                        !wallets.any((w) => w.id == _selectedWalletId))) {
-                  _selectedWalletId = wallets.first.id;
-                } else if (wallets.isEmpty) {
+                // If the previously-selected wallet was deleted, reset to All
+                if (_selectedWalletId != null &&
+                    !wallets.any((w) => w.id == _selectedWalletId)) {
                   _selectedWalletId = null;
                 }
 
                 final allTx = TransactionService.getAll();
 
-                // Filter by selected wallet, take 5
+                // Filter by selected wallet (null = show all), take 5
                 final filteredTx = _selectedWalletId == null
                     ? allTx.take(5).toList()
                     : allTx
@@ -54,10 +52,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         .take(5)
                         .toList();
 
-                final selectedWalletName = wallets
-                    .where((w) => w.id == _selectedWalletId)
-                    .map((w) => w.name)
-                    .firstOrNull ?? 'All';
+                // Label for the "Recent ·" header
+                final selectedWalletName = _selectedWalletId == null
+                    ? 'All'
+                    : wallets
+                        .where((w) => w.id == _selectedWalletId)
+                        .map((w) => w.name)
+                        .firstOrNull ?? 'All';
 
                 final thisMonth = DateTime.now();
                 final monthlyExpenses = allTx
@@ -79,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header
+                          // ── Header ──
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
@@ -156,7 +157,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          // Wallets row
+                          // ── Wallets section header ──
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Row(
@@ -167,7 +168,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
                                         color: PesowiseColors.strong)),
-                                Text('${wallets.length} wallet${wallets.length == 1 ? '' : 's'}',
+                                Text(
+                                    '${wallets.length} wallet${wallets.length == 1 ? '' : 's'}',
                                     style: const TextStyle(
                                         fontSize: 12,
                                         color: PesowiseColors.muted,
@@ -177,26 +179,86 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 12),
 
+                          // ── Wallet cards (All + individual) ──
                           if (wallets.isEmpty)
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text('No wallets yet — add one in the Wallets tab.',
-                                  style: TextStyle(color: PesowiseColors.muted, fontSize: 13)),
+                              child: Text(
+                                  'No wallets yet — add one in the Wallets tab.',
+                                  style: TextStyle(
+                                      color: PesowiseColors.muted, fontSize: 13)),
                             )
                           else
                             SizedBox(
                               height: 90,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                itemCount: wallets.length,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                // +1 for the synthetic "All Wallets" card at index 0
+                                itemCount: wallets.length + 1,
                                 itemBuilder: (context, i) {
-                                  final isSelected = wallets[i].id == _selectedWalletId;
+                                  // ── "All Wallets" card ──
+                                  if (i == 0) {
+                                    final isSelected = _selectedWalletId == null;
+                                    return GestureDetector(
+                                      onTap: () =>
+                                          setState(() => _selectedWalletId = null),
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        width: 150,
+                                        margin: const EdgeInsets.only(right: 12),
+                                        padding: const EdgeInsets.all(14),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? PesowiseColors.strong
+                                              : PesowiseColors.background,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? PesowiseColors.strong
+                                                : PesowiseColors.muted,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('All Wallets',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: isSelected
+                                                        ? PesowiseColors.white
+                                                        : PesowiseColors.muted)),
+                                            Text(
+                                                Formatters.currency(totalBalance),
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: isSelected
+                                                        ? PesowiseColors.white
+                                                        : PesowiseColors.strong)),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  // ── Individual wallet cards (shift index by -1) ──
+                                  final wallet = wallets[i - 1];
+                                  final isSelected =
+                                      wallet.id == _selectedWalletId;
                                   return GestureDetector(
                                     onTap: () => setState(
-                                        () => _selectedWalletId = wallets[i].id),
+                                        () => _selectedWalletId = wallet.id),
                                     child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 200),
+                                      duration:
+                                          const Duration(milliseconds: 200),
                                       width: 150,
                                       margin: const EdgeInsets.only(right: 12),
                                       padding: const EdgeInsets.all(14),
@@ -211,17 +273,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 : PesowiseColors.blushBorder),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(wallets[i].name,
+                                          Text(wallet.name,
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: isSelected
                                                       ? PesowiseColors.white
                                                       : PesowiseColors.muted)),
-                                          Text(Formatters.currency(wallets[i].balance),
+                                          Text(
+                                              Formatters.currency(wallet.balance),
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w700,
@@ -238,7 +303,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                           const SizedBox(height: 24),
 
-                          // Recent transactions header
+                          // ── Recent transactions header ──
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Row(
@@ -257,12 +322,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
+                    // ── Transaction list ──
                     if (filteredTx.isEmpty)
                       const SliverToBoxAdapter(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Text('No transactions for this wallet.',
-                              style: TextStyle(color: PesowiseColors.muted, fontSize: 13)),
+                              style: TextStyle(
+                                  color: PesowiseColors.muted, fontSize: 13)),
                         ),
                       )
                     else
@@ -270,7 +337,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
-                            (context, i) => TransactionTile(transaction: filteredTx[i]),
+                            (context, i) =>
+                                TransactionTile(transaction: filteredTx[i]),
                             childCount: filteredTx.length,
                           ),
                         ),
