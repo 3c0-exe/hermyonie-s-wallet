@@ -5,4 +5,4 @@ class HiveBoxes {
   static const String jamSessions  = 'jamSessions';
   static const String jamPersons   = 'jamPersons';
   static const String jamExpenses  = 'jamExpenses';
-}r
+}
