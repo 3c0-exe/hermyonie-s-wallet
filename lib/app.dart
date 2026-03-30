@@ -3,6 +3,7 @@ import 'core/theme.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/wallets/wallets_screen.dart';
 import 'screens/transactions/transactions_screen.dart';
+import 'screens/debts/debts_screen.dart';
 import 'screens/reports/reports_screen.dart';
 import 'widgets/bottom_nav.dart';
 
@@ -12,7 +13,7 @@ class PesowiseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Hermyonie's Wallet",
+      title: 'Pesowise',
       theme: PesowiseTheme.theme,
       debugShowCheckedModeBanner: false,
       home: const MainShell(),
@@ -34,6 +35,7 @@ class _MainShellState extends State<MainShell> {
     DashboardScreen(),
     WalletsScreen(),
     TransactionsScreen(),
+    DebtsScreen(),
     ReportsScreen(),
   ];
 

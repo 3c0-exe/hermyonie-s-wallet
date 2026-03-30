@@ -25,10 +25,11 @@ class PesowiseBottomNav extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(icon: LucideIcons.layoutDashboard, label: 'Dashboard', index: 0, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.wallet, label: 'Wallets', index: 1, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.list, label: 'Transactions', index: 2, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.barChart2, label: 'Reports', index: 3, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(icon: LucideIcons.layoutDashboard, label: 'Home',         index: 0, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(icon: LucideIcons.wallet,           label: 'Wallets',      index: 1, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(icon: LucideIcons.list,             label: 'Transactions', index: 2, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(icon: LucideIcons.alertCircle,      label: 'Debts',        index: 3, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(icon: LucideIcons.barChart2,        label: 'Reports',      index: 4, currentIndex: currentIndex, onTap: onTap),
             ],
           ),
         ),
@@ -59,16 +60,16 @@ class _NavItem extends StatelessWidget {
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 22, color: isActive ? PesowiseColors.strong : PesowiseColors.muted),
+            Icon(icon, size: 21, color: isActive ? PesowiseColors.strong : PesowiseColors.muted),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: isActive ? PesowiseColors.strong : PesowiseColors.muted,
               ),
