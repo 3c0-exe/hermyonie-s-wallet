@@ -5,6 +5,9 @@ import '../../models/wallet.dart';
 import '../../services/transaction_service.dart';
 import '../../services/wallet_service.dart';
 import '../../utils/categories.dart';
+import '../../utils/spending_nudge.dart';
+import '../../widgets/nudge_dialog.dart';
+
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -52,27 +55,36 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (picked != null) setState(() => _selectedDate = picked);
   }
 
-  void _save() async {
-    final label = _labelController.text.trim();
-    final amountText = _amountController.text.trim();
+void _save() async {
+  final label = _labelController.text.trim();
+  final amountText = _amountController.text.trim();
 
-    if (label.isEmpty || amountText.isEmpty || _selectedWalletId == null) return;
+  if (label.isEmpty || amountText.isEmpty || _selectedWalletId == null) return;
 
-    final amount = double.tryParse(amountText);
-    if (amount == null || amount <= 0) return;
+  final amount = double.tryParse(amountText);
+  if (amount == null || amount <= 0) return;
 
-    await TransactionService.add(
-      walletId: _selectedWalletId!,
-      label: label,
-      amount: amount,
-      isExpense: _isExpense,
-      category: _selectedCategory,
-      date: _selectedDate,
-      note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
-    );
+  await TransactionService.add(
+    walletId: _selectedWalletId!,
+    label: label,
+    amount: amount,
+    isExpense: _isExpense,
+    category: _selectedCategory,
+    date: _selectedDate,
+    note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+  );
 
-    if (mounted) Navigator.pop(context, true);
+  if (!mounted) return;
+
+  if (_isExpense) {
+    final nudge = SpendingNudge.check(_selectedCategory, amount);
+    if (nudge != null && mounted) {
+      await NudgeDialog.show(context, nudge, _selectedCategory);
+    }
   }
+
+  if (mounted) Navigator.pop(context, true);
+}
 
   @override
   Widget build(BuildContext context) {
