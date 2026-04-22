@@ -1,5 +1,5 @@
 {
-  "buildCommand": "flutter/bin/flutter build web --release --base-href / --wasm",
+  "buildCommand": "flutter/bin/flutter build web --release --base-href /",
   "outputDirectory": "build/web",
   "installCommand": "git clone https://github.com/flutter/flutter.git --depth 1 -b stable flutter",
   "framework": null
