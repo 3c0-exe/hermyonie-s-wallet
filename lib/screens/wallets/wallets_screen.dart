@@ -89,11 +89,74 @@ class WalletsScreen extends StatelessWidget {
                         ),
                       );
                     }
-                    return ListView.builder(
-                      itemCount: wallets.length,
-                      itemBuilder: (context, i) => WalletCard(
-                        wallet: wallets[i],
-                        onDelete: () async {
+return ListView.builder(
+  itemCount: wallets.length,
+  itemBuilder: (context, i) => WalletCard(
+    wallet: wallets[i],
+    onEdit: () async {
+      final controller = TextEditingController(
+          text: wallets[i].balance.toStringAsFixed(2));
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: PesowiseColors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
+          title: const Text('Edit Balance',
+              style: TextStyle(
+                  color: PesowiseColors.strong,
+                  fontWeight: FontWeight.w700)),
+          content: TextField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            autofocus: true,
+            style: const TextStyle(
+                color: PesowiseColors.strong,
+                fontWeight: FontWeight.w600),
+            decoration: InputDecoration(
+              prefixText: '₱ ',
+              prefixStyle: const TextStyle(
+                  color: PesowiseColors.strong,
+                  fontWeight: FontWeight.w600),
+              hintStyle:
+                  const TextStyle(color: PesowiseColors.muted),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                    color: PesowiseColors.blushBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                    color: PesowiseColors.strong),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel',
+                    style:
+                        TextStyle(color: PesowiseColors.muted))),
+            TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Save',
+                    style: TextStyle(
+                        color: PesowiseColors.strong,
+                        fontWeight: FontWeight.w700))),
+          ],
+        ),
+      );
+      if (confirmed == true) {
+        final newBalance =
+            double.tryParse(controller.text.trim());
+        if (newBalance != null) {
+          await WalletService.updateBalance(
+              wallets[i].id, newBalance);
+        }
+      }
+    },
+    onDelete: () async {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (_) => AlertDialog(

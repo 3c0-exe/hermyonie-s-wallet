@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../models/wallet.dart';
 import '../core/hive_boxes.dart';
+import '../models/transaction.dart';
 
 class WalletService {
   static Box<Wallet> get _box => Hive.box<Wallet>(HiveBoxes.wallets);
@@ -30,7 +31,15 @@ class WalletService {
     }
   }
 
-  static Future<void> delete(String walletId) async {
-    await _box.delete(walletId);
+static Future<void> delete(String walletId) async {
+  final txBox = Hive.box<Transaction>(HiveBoxes.transactions);
+  final txToDelete = txBox.values
+      .where((t) => t.walletId == walletId)
+      .map((t) => t.id)
+      .toList();
+  for (final id in txToDelete) {
+    await txBox.delete(id);
   }
+  await _box.delete(walletId);
+}
 }

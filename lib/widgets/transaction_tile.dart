@@ -47,11 +47,21 @@ class TransactionTile extends StatelessWidget {
                         fontSize: 14,
                         color: PesowiseColors.strong)),
                 const SizedBox(height: 2),
-                Text('${transaction.category} · ${Formatters.date(transaction.date)}',
-                    style: const TextStyle(
-                        fontSize: 12,
-                        color: PesowiseColors.muted,
-                        fontWeight: FontWeight.w500)),
+Text('${transaction.category} · ${Formatters.date(transaction.date)}',
+    style: const TextStyle(
+        fontSize: 12,
+        color: PesowiseColors.muted,
+        fontWeight: FontWeight.w500)),
+if (transaction.note != null && transaction.note!.isNotEmpty)
+  Padding(
+    padding: const EdgeInsets.only(top: 2),
+    child: Text(transaction.note!,
+        style: const TextStyle(
+            fontSize: 11,
+            color: PesowiseColors.muted,
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.italic)),
+  ),
               ],
             ),
           ),

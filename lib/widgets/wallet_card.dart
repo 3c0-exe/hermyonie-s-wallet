@@ -8,12 +8,14 @@ class WalletCard extends StatelessWidget {
   final Wallet wallet;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const WalletCard({
     super.key,
     required this.wallet,
     this.onTap,
     this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -66,15 +68,29 @@ class WalletCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
                         color: PesowiseColors.strong)),
-                if (onDelete != null)
-                  GestureDetector(
-                    onTap: onDelete,
-                    child: const Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Icon(LucideIcons.trash2,
-                          size: 14, color: PesowiseColors.muted),
-                    ),
-                  ),
+Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    if (onEdit != null)
+      GestureDetector(
+        onTap: onEdit,
+        child: const Padding(
+          padding: EdgeInsets.only(top: 4, right: 10),
+          child: Icon(LucideIcons.pencil,
+              size: 14, color: PesowiseColors.muted),
+        ),
+      ),
+            if (onDelete != null)
+              GestureDetector(
+                onTap: onDelete,
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Icon(LucideIcons.trash2,
+                      size: 14, color: PesowiseColors.muted),
+                ),
+              ),
+          ],
+        ),
               ],
             ),
           ],
