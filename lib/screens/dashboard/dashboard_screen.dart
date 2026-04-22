@@ -15,6 +15,8 @@ import '../../widgets/transaction_tile.dart';
 import '../../utils/formatters.dart';
 import '../transactions/add_transaction_screen.dart';
 import '../jam/jam_sessions_screen.dart';
+import '../../services/csv_service.dart';
+import '../../widgets/backup_reminder_dialog.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -25,6 +27,14 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   String? _selectedWalletId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BackupReminderDialog.showIfNeeded(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,25 +126,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 fontWeight: FontWeight.w500)),
                                       ],
                                     ),
-                                    GestureDetector(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const AddTransactionScreen())),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: PesowiseColors.white
-                                              .withOpacity(0.25),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: const Icon(LucideIcons.plus,
-                                            color: PesowiseColors.white,
-                                            size: 20),
-                                      ),
-                                    ),
+Row(
+  children: [
+GestureDetector(
+  onTap: () => CsvService.importAll(context),
+  child: Container(
+    padding: const EdgeInsets.all(10),
+    margin: const EdgeInsets.only(right: 8),
+    decoration: BoxDecoration(
+      color: PesowiseColors.white.withOpacity(0.25),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Icon(LucideIcons.upload,
+        color: PesowiseColors.white, size: 20),
+  ),
+),
+GestureDetector(
+  onTap: () => CsvService.exportAll(),
+  child: Container(
+    padding: const EdgeInsets.all(10),
+    margin: const EdgeInsets.only(right: 8),
+    decoration: BoxDecoration(
+      color: PesowiseColors.white.withOpacity(0.25),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Icon(LucideIcons.download,
+        color: PesowiseColors.white, size: 20),
+  ),
+),
+GestureDetector(
+  onTap: () => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (_) => const AddTransactionScreen())),
+  child: Container(
+    padding: const EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      color: PesowiseColors.white.withOpacity(0.25),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Icon(LucideIcons.plus,
+        color: PesowiseColors.white, size: 20),
+  ),
+),
+                                  ],
+                                ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
