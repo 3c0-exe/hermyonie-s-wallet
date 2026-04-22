@@ -1,9 +1,10 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'dart:convert';
+import 'dart:js_interop';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:web/web.dart' as web;
 import '../core/hive_boxes.dart';
 import '../models/wallet.dart';
 import '../models/transaction.dart';
@@ -76,41 +77,60 @@ class CsvService {
 
     final json = const JsonEncoder.withIndent('  ').convert(data);
     final bytes = utf8.encode(json);
-    final blob = html.Blob([bytes], 'application/json');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', 'pesowise_backup_$label.json')
+
+    final byteArray = Uint8List.fromList(bytes);
+    final blob = web.Blob(
+      [byteArray.buffer.toJS].toJS,
+      web.BlobPropertyBag(type: 'application/json'),
+    );
+    final url = web.URL.createObjectURL(blob);
+    final anchor = web.document.createElement('a') as web.HTMLAnchorElement
+      ..href = url
+      ..download = 'pesowise_backup_$label.json'
       ..click();
-    html.Url.revokeObjectUrl(url);
+    web.URL.revokeObjectURL(url);
+    anchor.remove();
   }
 
   // ── Import ──────────────────────────────────────────────
   static Future<void> importAll(BuildContext context) async {
-    final upload = html.FileUploadInputElement()
-      ..accept = '.json'
-      ..click();
+    final input = web.document.createElement('input') as web.HTMLInputElement
+      ..type = 'file'
+      ..accept = '.json,application/json';
 
-    await upload.onChange.first;
-    final file = upload.files?.first;
+    web.document.body!.append(input);
+    input.click();
+
+    await Future.any([
+      input.onChange.first,
+      Future.delayed(const Duration(minutes: 2)),
+    ]);
+
+    final files = input.files;
+    input.remove();
+
+    if (files == null || files.length == 0) return;
+    final file = files.item(0);
     if (file == null) return;
 
-    final reader = html.FileReader();
+    final reader = web.FileReader();
     reader.readAsText(file);
-    await reader.onLoad.first;
+    await reader.onLoadEnd.first;
 
-    final raw = reader.result as String;
+    final raw = reader.result as String?;
+    if (raw == null || raw.isEmpty) {
+      if (context.mounted) _showSnack(context, 'Invalid backup file. 😔');
+      return;
+    }
 
     Map<String, dynamic> data;
     try {
       data = jsonDecode(raw) as Map<String, dynamic>;
     } catch (_) {
-      if (context.mounted) {
-        _showSnack(context, 'Invalid backup file. 😔');
-      }
+      if (context.mounted) _showSnack(context, 'Invalid backup file. 😔');
       return;
     }
 
-    // Confirm before wiping
     if (!context.mounted) return;
     final confirm = await showDialog<bool>(
       context: context,
@@ -141,7 +161,6 @@ class CsvService {
     if (confirm != true) return;
 
     try {
-      // ── Wipe all boxes ──
       await Hive.box<Wallet>(HiveBoxes.wallets).clear();
       await Hive.box<Transaction>(HiveBoxes.transactions).clear();
       await Hive.box<Debt>(HiveBoxes.debts).clear();
@@ -149,7 +168,6 @@ class CsvService {
       await Hive.box<JamPerson>(HiveBoxes.jamPersons).clear();
       await Hive.box<JamExpense>(HiveBoxes.jamExpenses).clear();
 
-      // ── Restore wallets ──
       final walletBox = Hive.box<Wallet>(HiveBoxes.wallets);
       for (final w in (data['wallets'] as List)) {
         final wallet = Wallet()
@@ -161,7 +179,6 @@ class CsvService {
         await walletBox.put(wallet.id, wallet);
       }
 
-      // ── Restore transactions ──
       final txBox = Hive.box<Transaction>(HiveBoxes.transactions);
       for (final t in (data['transactions'] as List)) {
         final tx = Transaction()
@@ -176,7 +193,6 @@ class CsvService {
         await txBox.put(tx.id, tx);
       }
 
-      // ── Restore debts ──
       final debtBox = Hive.box<Debt>(HiveBoxes.debts);
       for (final d in (data['debts'] as List)) {
         final debt = Debt()
@@ -192,7 +208,6 @@ class CsvService {
         await debtBox.put(debt.id, debt);
       }
 
-      // ── Restore jam sessions ──
       final sessionBox = Hive.box<JamSession>(HiveBoxes.jamSessions);
       for (final s in (data['jamSessions'] as List)) {
         final session = JamSession()
@@ -203,7 +218,6 @@ class CsvService {
         await sessionBox.put(session.id, session);
       }
 
-      // ── Restore jam persons ──
       final personBox = Hive.box<JamPerson>(HiveBoxes.jamPersons);
       for (final p in (data['jamPersons'] as List)) {
         final person = JamPerson()
@@ -214,7 +228,6 @@ class CsvService {
         await personBox.put(person.id, person);
       }
 
-      // ── Restore jam expenses ──
       final expenseBox = Hive.box<JamExpense>(HiveBoxes.jamExpenses);
       for (final e in (data['jamExpenses'] as List)) {
         final expense = JamExpense()
@@ -244,7 +257,8 @@ class CsvService {
                 color: Color(0xFFFFFFFF), fontWeight: FontWeight.w600)),
         backgroundColor: const Color(0xFFD4537E),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
