@@ -18,10 +18,27 @@ class GoogleDriveService {
   /// Sign in the user (if not already signed in) and return an authenticated client.
   static Future<dynamic> _getAuthenticatedClient() async {
     try {
-      var account = _googleSignIn.currentUser ?? await _googleSignIn.signInSilently();
+      var account = _googleSignIn.currentUser;
+      if (account == null) {
+        try {
+          account = await _googleSignIn.signInSilently();
+        } catch (_) {
+          // signInSilently throws an error if user has never signed in before. Ignore it.
+        }
+      }
+      
       account ??= await _googleSignIn.signIn();
 
       if (account == null) return null; // User canceled sign-in
+
+      // Ensure we actually have permission to use Google Drive
+      final bool canAccess = await _googleSignIn.canAccessScopes([drive.DriveApi.driveFileScope]);
+      if (!canAccess) {
+        final bool authorized = await _googleSignIn.requestScopes([drive.DriveApi.driveFileScope]);
+        if (!authorized) {
+          return null; // User denied Drive access
+        }
+      }
 
       final authClient = await _googleSignIn.authenticatedClient();
       return authClient;
