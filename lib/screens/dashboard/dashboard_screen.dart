@@ -16,6 +16,7 @@ import '../../utils/formatters.dart';
 import '../transactions/add_transaction_screen.dart';
 import '../jam/jam_sessions_screen.dart';
 import '../../services/csv_service.dart';
+import '../../services/google_drive_service.dart';
 import '../../widgets/backup_reminder_dialog.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -151,6 +152,19 @@ GestureDetector(
       borderRadius: BorderRadius.circular(12),
     ),
     child: const Icon(LucideIcons.download,
+        color: PesowiseColors.white, size: 20),
+  ),
+),
+GestureDetector(
+  onTap: () => GoogleDriveService.backupToDrive(context),
+  child: Container(
+    padding: const EdgeInsets.all(10),
+    margin: const EdgeInsets.only(right: 8),
+    decoration: BoxDecoration(
+      color: PesowiseColors.white.withOpacity(0.25),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Icon(LucideIcons.cloud,
         color: PesowiseColors.white, size: 20),
   ),
 ),

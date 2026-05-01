@@ -19,7 +19,7 @@ import '../services/jam_service.dart';
 
 class CsvService {
   // ── Export ──────────────────────────────────────────────
-  static void exportAll() {
+  static String exportAllToJson() {
     final now = DateTime.now();
     final label = DateFormat('yyyy-MM-dd').format(now);
 
@@ -75,8 +75,15 @@ class CsvService {
       }).toList(),
     };
 
-    final json = const JsonEncoder.withIndent('  ').convert(data);
-    final bytes = utf8.encode(json);
+    return const JsonEncoder.withIndent('  ').convert(data);
+  }
+
+  static void exportAll() {
+    final now = DateTime.now();
+    final label = DateFormat('yyyy-MM-dd').format(now);
+    
+    final jsonString = exportAllToJson();
+    final bytes = utf8.encode(jsonString);
 
     final byteArray = Uint8List.fromList(bytes);
     final blob = web.Blob(
