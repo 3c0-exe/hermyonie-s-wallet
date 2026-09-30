@@ -6,7 +6,9 @@ class ReminderService {
   static Future<bool> shouldShowReminder() async {
     final now = DateTime.now();
     // Only on 15th and 30th (or last day of month)
-    final isReminderDay = now.day == 15 || now.day == 30 ||
+    final isReminderDay =
+        now.day == 15 ||
+        now.day == 30 ||
         now.day == _lastDayOfMonth(now.year, now.month);
     if (!isReminderDay) return false;
 

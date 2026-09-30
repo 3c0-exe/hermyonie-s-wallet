@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../services/jam_service.dart';
 
@@ -87,14 +87,17 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
         backgroundColor: PesowiseColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: PesowiseColors.strong),
+          icon: const Icon(WalletIcons.arrowLeft, color: PesowiseColors.strong),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(title,
-            style: const TextStyle(
-                color: PesowiseColors.strong,
-                fontWeight: FontWeight.w700,
-                fontSize: 18)),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -114,14 +117,17 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                 child: TextField(
                   controller: _nameController,
                   style: const TextStyle(
-                      color: PesowiseColors.strong,
-                      fontWeight: FontWeight.w600),
+                    color: PesowiseColors.strong,
+                    fontWeight: FontWeight.w600,
+                  ),
                   decoration: const InputDecoration(
                     hintText: 'e.g. Anna, Bea, Carlo',
                     hintStyle: TextStyle(color: PesowiseColors.muted),
                     border: InputBorder.none,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -137,7 +143,9 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 12),
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: PesowiseColors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -150,13 +158,16 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                       child: TextField(
                         controller: row.desc,
                         style: const TextStyle(
-                            color: PesowiseColors.strong,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13),
+                          color: PesowiseColors.strong,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                         decoration: const InputDecoration(
                           hintText: 'Description',
                           hintStyle: TextStyle(
-                              color: PesowiseColors.muted, fontSize: 13),
+                            color: PesowiseColors.muted,
+                            fontSize: 13,
+                          ),
                           border: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
@@ -164,31 +175,37 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                       ),
                     ),
                     Container(
-                        width: 1,
-                        height: 18,
-                        margin:
-                            const EdgeInsets.symmetric(horizontal: 12),
-                        color: PesowiseColors.blushBorder),
-                    const Text('₱',
-                        style: TextStyle(
-                            color: PesowiseColors.strong,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13)),
+                      width: 1,
+                      height: 18,
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      color: PesowiseColors.blushBorder,
+                    ),
+                    const Text(
+                      '₱',
+                      style: TextStyle(
+                        color: PesowiseColors.strong,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: TextField(
                         controller: row.amount,
-                        keyboardType:
-                            const TextInputType.numberWithOptions(
-                                decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         style: const TextStyle(
-                            color: PesowiseColors.strong,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13),
+                          color: PesowiseColors.strong,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                         decoration: const InputDecoration(
                           hintText: '0.00',
                           hintStyle: TextStyle(
-                              color: PesowiseColors.muted, fontSize: 13),
+                            color: PesowiseColors.muted,
+                            fontSize: 13,
+                          ),
                           border: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
@@ -199,8 +216,11 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                       const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () => setState(() => _rows.removeAt(i)),
-                        child: const Icon(LucideIcons.x,
-                            size: 15, color: PesowiseColors.muted),
+                        child: const Icon(
+                          WalletIcons.x,
+                          size: 15,
+                          color: PesowiseColors.muted,
+                        ),
                       ),
                     ],
                   ],
@@ -221,14 +241,20 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(LucideIcons.plusCircle,
-                        size: 14, color: PesowiseColors.accent),
+                    Icon(
+                      WalletIcons.plusCircle,
+                      size: 14,
+                      color: PesowiseColors.accent,
+                    ),
                     SizedBox(width: 8),
-                    Text('Add another expense',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: PesowiseColors.accent)),
+                    Text(
+                      'Add another expense',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: PesowiseColors.accent,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -245,13 +271,16 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
                 child: Text(
                   _isEditing ? 'Save Expenses' : 'Add Person',
                   style: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 16),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
@@ -262,14 +291,17 @@ class _AddJamPersonScreenState extends State<AddJamPersonScreen> {
     );
   }
 
-  Widget _label(String t) => Text(t,
-      style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: PesowiseColors.muted));
+  Widget _label(String t) => Text(
+    t,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: PesowiseColors.muted,
+    ),
+  );
 }
 
 class _ExpenseRow {
-  final desc   = TextEditingController();
+  final desc = TextEditingController();
   final amount = TextEditingController();
 }

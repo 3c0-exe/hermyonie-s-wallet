@@ -26,15 +26,19 @@ class GoogleDriveService {
           // signInSilently throws an error if user has never signed in before. Ignore it.
         }
       }
-      
+
       account ??= await _googleSignIn.signIn();
 
       if (account == null) return null; // User canceled sign-in
 
       // Ensure we actually have permission to use Google Drive
-      final bool canAccess = await _googleSignIn.canAccessScopes([drive.DriveApi.driveFileScope]);
+      final bool canAccess = await _googleSignIn.canAccessScopes([
+        drive.DriveApi.driveFileScope,
+      ]);
       if (!canAccess) {
-        final bool authorized = await _googleSignIn.requestScopes([drive.DriveApi.driveFileScope]);
+        final bool authorized = await _googleSignIn.requestScopes([
+          drive.DriveApi.driveFileScope,
+        ]);
         if (!authorized) {
           return null; // User denied Drive access
         }
@@ -53,17 +57,21 @@ class GoogleDriveService {
     try {
       final client = await _getAuthenticatedClient();
       if (client == null) {
-        if (context.mounted) _showSnack(context, 'Google Sign-in failed or was canceled.');
+        if (context.mounted) {
+          _showSnack(context, 'Google Sign-in failed or was canceled.');
+        }
         return false;
       }
 
-      if (context.mounted) _showSnack(context, 'Starting backup to Google Drive...');
+      if (context.mounted) {
+        _showSnack(context, 'Starting backup to Google Drive...');
+      }
 
       final driveApi = drive.DriveApi(client);
-      
+
       // We will look for an existing backup file to update, or create a new one.
       const fileName = 'hermyonies_wallet_backup.json';
-      
+
       final fileList = await driveApi.files.list(
         q: "name = '$fileName' and trashed = false",
         spaces: 'drive',
@@ -85,13 +93,12 @@ class GoogleDriveService {
       } else {
         // Create new file
         final file = drive.File()..name = fileName;
-        await driveApi.files.create(
-          file,
-          uploadMedia: media,
-        );
+        await driveApi.files.create(file, uploadMedia: media);
       }
 
-      if (context.mounted) _showSnack(context, 'Backup saved to Google Drive! ☁️✨');
+      if (context.mounted) {
+        _showSnack(context, 'Backup saved to Google Drive! ☁️✨');
+      }
       return true;
     } catch (e) {
       debugPrint('Backup Error: $e');
@@ -103,8 +110,13 @@ class GoogleDriveService {
   static void _showSnack(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message,
-            style: const TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.w600)),
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         backgroundColor: const Color(0xFFD4537E),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

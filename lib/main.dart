@@ -7,6 +7,7 @@ import 'models/jam_session.dart';
 import 'models/jam_person.dart';
 import 'models/jam_expense.dart';
 import 'app.dart';
+import 'services/ledger_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,5 +24,6 @@ void main() async {
   await Hive.openBox<JamSession>('jamSessions');
   await Hive.openBox<JamPerson>('jamPersons');
   await Hive.openBox<JamExpense>('jamExpenses');
+  await LedgerService.initialize();
   runApp(const PesowiseApp());
 }

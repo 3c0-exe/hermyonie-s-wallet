@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../services/wallet_service.dart';
 
@@ -16,11 +16,11 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
   String _selectedIcon = 'wallet';
 
   final _icons = const [
-    ('wallet', LucideIcons.wallet),
-    ('smartphone', LucideIcons.smartphone),
-    ('building', LucideIcons.building2),
-    ('piggy-bank', LucideIcons.piggyBank),
-    ('credit-card', LucideIcons.creditCard),
+    ('wallet', WalletIcons.wallet),
+    ('smartphone', WalletIcons.smartphone),
+    ('building', WalletIcons.building2),
+    ('piggy-bank', WalletIcons.piggyBank),
+    ('credit-card', WalletIcons.creditCard),
   ];
 
   void _save() async {
@@ -43,14 +43,17 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
         backgroundColor: PesowiseColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: PesowiseColors.strong),
+          icon: const Icon(WalletIcons.arrowLeft, color: PesowiseColors.strong),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New Wallet',
-            style: TextStyle(
-                color: PesowiseColors.strong,
-                fontWeight: FontWeight.w700,
-                fontSize: 18)),
+        title: const Text(
+          'New Wallet',
+          style: TextStyle(
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -63,9 +66,14 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
             const SizedBox(height: 20),
             _label('Starting Balance'),
             const SizedBox(height: 8),
-            _input(_balanceController, '0.00',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                prefix: '₱ '),
+            _input(
+              _balanceController,
+              '0.00',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              prefix: '₱ ',
+            ),
             const SizedBox(height: 20),
             _label('Icon'),
             const SizedBox(height: 12),
@@ -80,15 +88,23 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: isSelected ? PesowiseColors.strong : PesowiseColors.chipBg,
+                      color: isSelected
+                          ? PesowiseColors.strong
+                          : PesowiseColors.chipBg,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected ? PesowiseColors.strong : PesowiseColors.blushBorder,
+                        color: isSelected
+                            ? PesowiseColors.strong
+                            : PesowiseColors.blushBorder,
                       ),
                     ),
-                    child: Icon(entry.$2,
-                        color: isSelected ? PesowiseColors.white : PesowiseColors.strong,
-                        size: 22),
+                    child: Icon(
+                      entry.$2,
+                      color: isSelected
+                          ? PesowiseColors.white
+                          : PesowiseColors.strong,
+                      size: 22,
+                    ),
                   ),
                 );
               }).toList(),
@@ -103,11 +119,14 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('Add Wallet',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                child: const Text(
+                  'Add Wallet',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -117,14 +136,21 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
     );
   }
 
-  Widget _label(String text) => Text(text,
-      style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: PesowiseColors.muted));
+  Widget _label(String text) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: PesowiseColors.muted,
+    ),
+  );
 
-  Widget _input(TextEditingController controller, String hint,
-      {TextInputType? keyboardType, String? prefix}) {
+  Widget _input(
+    TextEditingController controller,
+    String hint, {
+    TextInputType? keyboardType,
+    String? prefix,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: PesowiseColors.white,
@@ -135,16 +161,22 @@ class _AddWalletScreenState extends State<AddWalletScreen> {
         controller: controller,
         keyboardType: keyboardType,
         style: const TextStyle(
-            color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+          color: PesowiseColors.strong,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           hintText: hint,
           prefixText: prefix,
           prefixStyle: const TextStyle(
-              color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w600,
+          ),
           hintStyle: const TextStyle(color: PesowiseColors.muted),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

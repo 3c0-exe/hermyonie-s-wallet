@@ -27,4 +27,19 @@ class Transaction extends HiveObject {
 
   @HiveField(7)
   String? note;
+
+  @HiveField(8, defaultValue: 'standard')
+  String entryType = 'standard';
+  @HiveField(9)
+  String? toWalletId;
+  @HiveField(10)
+  String? debtId;
+  @HiveField(11)
+  String? debtBefore;
+  @HiveField(12)
+  String? externalId;
+
+  bool get isTransfer => entryType == 'transfer' || entryType == 'repayment';
+  bool get countsAsSpending => entryType == 'standard' && isExpense;
+  bool get countsAsIncome => entryType == 'standard' && !isExpense;
 }

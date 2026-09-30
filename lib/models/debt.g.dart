@@ -25,13 +25,18 @@ class DebtAdapter extends TypeAdapter<Debt> {
       ..dueDate = fields[5] as DateTime?
       ..isRecurring = fields[6] as bool
       ..note = fields[7] as String?
-      ..createdAt = fields[8] as DateTime;
+      ..createdAt = fields[8] as DateTime
+      ..installmentAmount = fields[9] as double?
+      ..totalAmount = fields[10] as double?
+      ..paidAmount = fields[11] == null ? 0.0 : fields[11] as double
+      ..isPaid = fields[12] == null ? false : fields[12] as bool
+      ..anchorDay = fields[13] as int?;
   }
 
   @override
   void write(BinaryWriter writer, Debt obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -49,7 +54,17 @@ class DebtAdapter extends TypeAdapter<Debt> {
       ..writeByte(7)
       ..write(obj.note)
       ..writeByte(8)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(9)
+      ..write(obj.installmentAmount)
+      ..writeByte(10)
+      ..write(obj.totalAmount)
+      ..writeByte(11)
+      ..write(obj.paidAmount)
+      ..writeByte(12)
+      ..write(obj.isPaid)
+      ..writeByte(13)
+      ..write(obj.anchorDay);
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../core/theme.dart';
 import '../services/csv_service.dart';
 import '../services/reminder_service.dart';
@@ -38,26 +38,31 @@ class BackupReminderDialog extends StatelessWidget {
                 color: PesowiseColors.chipBg,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(LucideIcons.download,
-                  color: PesowiseColors.strong, size: 26),
+              child: const Icon(
+                WalletIcons.download,
+                color: PesowiseColors.strong,
+                size: 26,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
               'Backup Reminder 🌸',
               style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: PesowiseColors.strong),
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: PesowiseColors.strong,
+              ),
             ),
             const SizedBox(height: 10),
             const Text(
               'Hey Hermyonie! It\'s that time again.\nPlease download a copy of your expenses so your data stays safe. 💾',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 13,
-                  color: PesowiseColors.muted,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5),
+                fontSize: 13,
+                color: PesowiseColors.muted,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -73,12 +78,14 @@ class BackupReminderDialog extends StatelessWidget {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('Download Now 💾',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                child: const Text(
+                  'Download Now 💾',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -87,11 +94,14 @@ class BackupReminderDialog extends StatelessWidget {
                 await ReminderService.dismiss();
                 if (context.mounted) Navigator.pop(context);
               },
-              child: const Text('Maybe later',
-                  style: TextStyle(
-                      color: PesowiseColors.muted,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13)),
+              child: const Text(
+                'Maybe later',
+                style: TextStyle(
+                  color: PesowiseColors.muted,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ],
         ),

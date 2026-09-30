@@ -11,7 +11,11 @@ class SettlementTransfer {
   final String from;
   final String to;
   final double amount;
-  const SettlementTransfer({required this.from, required this.to, required this.amount});
+  const SettlementTransfer({
+    required this.from,
+    required this.to,
+    required this.amount,
+  });
 }
 
 class PersonSummary {
@@ -28,9 +32,12 @@ class PersonSummary {
 }
 
 class JamService {
-  static Box<JamSession> get _sessions  => Hive.box<JamSession>(HiveBoxes.jamSessions);
-  static Box<JamPerson>  get _persons   => Hive.box<JamPerson>(HiveBoxes.jamPersons);
-  static Box<JamExpense> get _expenses  => Hive.box<JamExpense>(HiveBoxes.jamExpenses);
+  static Box<JamSession> get _sessions =>
+      Hive.box<JamSession>(HiveBoxes.jamSessions);
+  static Box<JamPerson> get _persons =>
+      Hive.box<JamPerson>(HiveBoxes.jamPersons);
+  static Box<JamExpense> get _expenses =>
+      Hive.box<JamExpense>(HiveBoxes.jamExpenses);
   static const _uuid = Uuid();
 
   // ── Sessions ──────────────────────────────────────────
@@ -69,7 +76,9 @@ class JamService {
           .where((e) => e.personId == pid)
           .map((e) => e.id)
           .toList();
-      for (final eid in expIds) await _expenses.delete(eid);
+      for (final eid in expIds) {
+        await _expenses.delete(eid);
+      }
       await _persons.delete(pid);
     }
     await _sessions.delete(sessionId);
@@ -77,7 +86,9 @@ class JamService {
 
   // ── Persons ───────────────────────────────────────────
   static List<JamPerson> getPersons(String sessionId) {
-    final list = _persons.values.where((p) => p.sessionId == sessionId).toList();
+    final list = _persons.values
+        .where((p) => p.sessionId == sessionId)
+        .toList();
     list.sort((a, b) => a.isOwner ? -1 : (b.isOwner ? 1 : 0));
     return list;
   }
@@ -97,7 +108,9 @@ class JamService {
         .where((e) => e.personId == personId)
         .map((e) => e.id)
         .toList();
-    for (final eid in expIds) await _expenses.delete(eid);
+    for (final eid in expIds) {
+      await _expenses.delete(eid);
+    }
     await _persons.delete(personId);
   }
 
@@ -106,7 +119,11 @@ class JamService {
       _expenses.values.where((e) => e.personId == personId).toList();
 
   static Future<void> addExpense(
-      String personId, String sessionId, String description, double amount) async {
+    String personId,
+    String sessionId,
+    String description,
+    double amount,
+  ) async {
     final expense = JamExpense()
       ..id = _uuid.v4()
       ..personId = personId
@@ -136,7 +153,11 @@ class JamService {
     return persons.map((p) {
       final paid = getTotalPaidByPerson(p.id);
       return PersonSummary(
-          person: p, totalPaid: paid, fairShare: fairShare, balance: paid - fairShare);
+        person: p,
+        totalPaid: paid,
+        fairShare: fairShare,
+        balance: paid - fairShare,
+      );
     }).toList();
   }
 
@@ -144,45 +165,55 @@ class JamService {
   static List<SettlementTransfer> calculateSettlement(String sessionId) {
     final summaries = getPersonSummaries(sessionId);
     final transfers = <SettlementTransfer>[];
-    final bal = <String, double>{for (final s in summaries) s.person.id: s.balance};
+    final bal = <String, double>{
+      for (final s in summaries) s.person.id: s.balance,
+    };
     final nameMap = {for (final s in summaries) s.person.id: s.person.name};
 
     while (true) {
       String? creditorId, debtorId;
       double maxCredit = 0.005, maxDebt = 0.005;
       for (final e in bal.entries) {
-        if (e.value > maxCredit)  { maxCredit = e.value;        creditorId = e.key; }
-        if (e.value < -maxDebt)   { maxDebt   = e.value.abs();  debtorId   = e.key; }
+        if (e.value > maxCredit) {
+          maxCredit = e.value;
+          creditorId = e.key;
+        }
+        if (e.value < -maxDebt) {
+          maxDebt = e.value.abs();
+          debtorId = e.key;
+        }
       }
       if (creditorId == null || debtorId == null) break;
 
       final amount = min(maxCredit, maxDebt);
-      transfers.add(SettlementTransfer(
-        from:   nameMap[debtorId]!,
-        to:     nameMap[creditorId]!,
-        amount: double.parse(amount.toStringAsFixed(2)),
-      ));
+      transfers.add(
+        SettlementTransfer(
+          from: nameMap[debtorId]!,
+          to: nameMap[creditorId]!,
+          amount: double.parse(amount.toStringAsFixed(2)),
+        ),
+      );
       bal[creditorId] = bal[creditorId]! - amount;
-      bal[debtorId]   = bal[debtorId]!   + amount;
+      bal[debtorId] = bal[debtorId]! + amount;
     }
     return transfers;
   }
 
   static Future<void> settleSession(String sessionId, String walletId) async {
     final session = _sessions.get(sessionId);
-    if (session == null) return;
-    final summaries   = getPersonSummaries(sessionId);
+    if (session == null || session.isSettled) return;
+    final summaries = getPersonSummaries(sessionId);
     final ownerSummary = summaries.where((s) => s.person.isOwner).firstOrNull;
 
     if (ownerSummary != null && ownerSummary.fairShare > 0) {
       await TransactionService.add(
         walletId: walletId,
-        label:    session.name,
-        amount:   ownerSummary.fairShare,
+        label: session.name,
+        amount: ownerSummary.fairShare,
         isExpense: true,
         category: 'Entertainment',
-        date:     DateTime.now(),
-        note:     'Jam session · my share (${getPersons(sessionId).length} people)',
+        date: DateTime.now(),
+        note: 'Jam session · my share (${getPersons(sessionId).length} people)',
       );
     }
     session.isSettled = true;

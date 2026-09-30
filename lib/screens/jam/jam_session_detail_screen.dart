@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../core/hive_boxes.dart';
 import '../../models/jam_session.dart';
@@ -22,17 +22,21 @@ class JamSessionDetailScreen extends StatelessWidget {
       builder: (context, _, __) => ValueListenableBuilder(
         valueListenable: Hive.box<JamPerson>(HiveBoxes.jamPersons).listenable(),
         builder: (context, _, __) => ValueListenableBuilder(
-          valueListenable: Hive.box<JamExpense>(HiveBoxes.jamExpenses).listenable(),
+          valueListenable: Hive.box<JamExpense>(
+            HiveBoxes.jamExpenses,
+          ).listenable(),
           builder: (context, _, __) {
-            final session =
-                Hive.box<JamSession>(HiveBoxes.jamSessions).get(sessionId);
+            final session = Hive.box<JamSession>(
+              HiveBoxes.jamSessions,
+            ).get(sessionId);
             if (session == null) {
               return const Scaffold(
-                  body: Center(child: Text('Session not found')));
+                body: Center(child: Text('Session not found')),
+              );
             }
 
-            final persons   = JamService.getPersons(sessionId);
-            final total     = JamService.getSessionTotal(sessionId);
+            final persons = JamService.getPersons(sessionId);
+            final total = JamService.getSessionTotal(sessionId);
             final fairShare = persons.isNotEmpty ? total / persons.length : 0.0;
 
             return Scaffold(
@@ -41,61 +45,83 @@ class JamSessionDetailScreen extends StatelessWidget {
                 backgroundColor: PesowiseColors.background,
                 elevation: 0,
                 leading: IconButton(
-                  icon: const Icon(LucideIcons.arrowLeft,
-                      color: PesowiseColors.strong),
+                  icon: const Icon(
+                    WalletIcons.arrowLeft,
+                    color: PesowiseColors.strong,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(session.name,
-                        style: const TextStyle(
-                            color: PesowiseColors.strong,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17)),
-                    Text(Formatters.date(session.createdAt),
-                        style: const TextStyle(
-                            color: PesowiseColors.muted,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500)),
+                    Text(
+                      session.name,
+                      style: const TextStyle(
+                        color: PesowiseColors.strong,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Text(
+                      Formatters.date(session.createdAt),
+                      style: const TextStyle(
+                        color: PesowiseColors.muted,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
                 actions: [
                   if (!session.isSettled)
                     IconButton(
-                      icon: const Icon(LucideIcons.trash2,
-                          color: PesowiseColors.muted, size: 18),
+                      icon: const Icon(
+                        WalletIcons.trash2,
+                        color: PesowiseColors.muted,
+                        size: 18,
+                      ),
                       onPressed: () async {
                         final confirm = await showDialog<bool>(
                           context: context,
                           builder: (_) => AlertDialog(
                             backgroundColor: PesowiseColors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            title: const Text('Delete session?',
-                                style: TextStyle(
-                                    color: PesowiseColors.strong,
-                                    fontWeight: FontWeight.w700)),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: const Text(
+                              'Delete session?',
+                              style: TextStyle(
+                                color: PesowiseColors.strong,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                             content: const Text(
-                                'This will permanently delete all data for this session.',
-                                style: TextStyle(color: PesowiseColors.muted)),
+                              'This will permanently delete all data for this session.',
+                              style: TextStyle(color: PesowiseColors.muted),
+                            ),
                             actions: [
                               TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Cancel',
-                                      style:
-                                          TextStyle(color: PesowiseColors.muted))),
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(color: PesowiseColors.muted),
+                                ),
+                              ),
                               TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Delete',
-                                      style: TextStyle(
-                                          color: PesowiseColors.strong))),
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: PesowiseColors.strong,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         );
                         if (confirm == true && context.mounted) {
                           await JamService.deleteSession(sessionId);
-                          Navigator.pop(context);
+                          if (context.mounted) Navigator.pop(context);
                         }
                       },
                     ),
@@ -115,9 +141,24 @@ class JamSessionDetailScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Expanded(child: _Stat(label: 'Total',      value: Formatters.currency(total))),
-                        Expanded(child: _Stat(label: 'Per Person', value: Formatters.currency(fairShare))),
-                        Expanded(child: _Stat(label: 'People',     value: '${persons.length}')),
+                        Expanded(
+                          child: _Stat(
+                            label: 'Total',
+                            value: Formatters.currency(total),
+                          ),
+                        ),
+                        Expanded(
+                          child: _Stat(
+                            label: 'Per Person',
+                            value: Formatters.currency(fairShare),
+                          ),
+                        ),
+                        Expanded(
+                          child: _Stat(
+                            label: 'People',
+                            value: '${persons.length}',
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -126,21 +167,29 @@ class JamSessionDetailScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: PesowiseColors.chipBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
                         children: [
-                          Icon(LucideIcons.checkCircle2,
-                              size: 14, color: PesowiseColors.strong),
+                          Icon(
+                            WalletIcons.checkCircle2,
+                            size: 14,
+                            color: PesowiseColors.strong,
+                          ),
                           SizedBox(width: 8),
-                          Text('This session has been settled',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: PesowiseColors.strong)),
+                          Text(
+                            'This session has been settled',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: PesowiseColors.strong,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -153,35 +202,47 @@ class JamSessionDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          '${persons.length} ${persons.length == 1 ? 'Person' : 'People'}',
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: PesowiseColors.strong)),
+                        '${persons.length} ${persons.length == 1 ? 'Person' : 'People'}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: PesowiseColors.strong,
+                        ),
+                      ),
                       if (!session.isSettled)
                         GestureDetector(
                           onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => AddJamPersonScreen(
-                                      sessionId: sessionId))),
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  AddJamPersonScreen(sessionId: sessionId),
+                            ),
+                          ),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 8),
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: PesowiseColors.strong,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Row(
                               children: [
-                                Icon(LucideIcons.userPlus,
-                                    size: 13, color: PesowiseColors.white),
+                                Icon(
+                                  WalletIcons.userPlus,
+                                  size: 13,
+                                  color: PesowiseColors.white,
+                                ),
                                 SizedBox(width: 6),
-                                Text('Add Person',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: PesowiseColors.white)),
+                                Text(
+                                  'Add Person',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: PesowiseColors.white,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -191,11 +252,13 @@ class JamSessionDetailScreen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   // Person cards
-                  ...persons.map((p) => _PersonCard(
-                        person: p,
-                        sessionId: sessionId,
-                        isSettled: session.isSettled,
-                      )),
+                  ...persons.map(
+                    (p) => _PersonCard(
+                      person: p,
+                      sessionId: sessionId,
+                      isSettled: session.isSettled,
+                    ),
+                  ),
 
                   const SizedBox(height: 8),
 
@@ -218,12 +281,17 @@ class JamSessionDetailScreen extends StatelessWidget {
                           foregroundColor: PesowiseColors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14)),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                           elevation: 0,
                         ),
-                        child: const Text('Settle Up 🌸',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 16)),
+                        child: const Text(
+                          'Settle Up 🌸',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
                   const SizedBox(height: 20),
@@ -242,12 +310,16 @@ class _PersonCard extends StatelessWidget {
   final JamPerson person;
   final String sessionId;
   final bool isSettled;
-  const _PersonCard({required this.person, required this.sessionId, required this.isSettled});
+  const _PersonCard({
+    required this.person,
+    required this.sessionId,
+    required this.isSettled,
+  });
 
   @override
   Widget build(BuildContext context) {
     final expenses = JamService.getExpensesForPerson(person.id);
-    final total    = JamService.getTotalPaidByPerson(person.id);
+    final total = JamService.getTotalPaidByPerson(person.id);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -264,7 +336,8 @@ class _PersonCard extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 38, height: 38,
+                  width: 38,
+                  height: 38,
                   decoration: BoxDecoration(
                     color: person.isOwner
                         ? PesowiseColors.strong
@@ -275,11 +348,12 @@ class _PersonCard extends StatelessWidget {
                     child: Text(
                       person.name.substring(0, 1).toUpperCase(),
                       style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: person.isOwner
-                              ? PesowiseColors.white
-                              : PesowiseColors.strong),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: person.isOwner
+                            ? PesowiseColors.white
+                            : PesowiseColors.strong,
+                      ),
                     ),
                   ),
                 ),
@@ -288,25 +362,33 @@ class _PersonCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(person.isOwner ? '${person.name} (you)' : person.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: PesowiseColors.strong)),
                       Text(
-                          '${expenses.length} expense${expenses.length == 1 ? '' : 's'}',
-                          style: const TextStyle(
-                              fontSize: 11,
-                              color: PesowiseColors.muted,
-                              fontWeight: FontWeight.w500)),
+                        person.isOwner ? '${person.name} (you)' : person.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: PesowiseColors.strong,
+                        ),
+                      ),
+                      Text(
+                        '${expenses.length} expense${expenses.length == 1 ? '' : 's'}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: PesowiseColors.muted,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Text(Formatters.currency(total),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: PesowiseColors.strong)),
+                Text(
+                  Formatters.currency(total),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: PesowiseColors.strong,
+                  ),
+                ),
                 if (!isSettled && !person.isOwner) ...[
                   const SizedBox(width: 8),
                   GestureDetector(
@@ -316,33 +398,44 @@ class _PersonCard extends StatelessWidget {
                         builder: (_) => AlertDialog(
                           backgroundColor: PesowiseColors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          title: const Text('Remove person?',
-                              style: TextStyle(
-                                  color: PesowiseColors.strong,
-                                  fontWeight: FontWeight.w700)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Text(
+                            'Remove person?',
+                            style: TextStyle(
+                              color: PesowiseColors.strong,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           content: Text(
-                              'Remove ${person.name} and all their expenses.',
-                              style:
-                                  const TextStyle(color: PesowiseColors.muted)),
+                            'Remove ${person.name} and all their expenses.',
+                            style: const TextStyle(color: PesowiseColors.muted),
+                          ),
                           actions: [
                             TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancel',
-                                    style: TextStyle(
-                                        color: PesowiseColors.muted))),
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: PesowiseColors.muted),
+                              ),
+                            ),
                             TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text('Remove',
-                                    style: TextStyle(
-                                        color: PesowiseColors.strong))),
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text(
+                                'Remove',
+                                style: TextStyle(color: PesowiseColors.strong),
+                              ),
+                            ),
                           ],
                         ),
                       );
                       if (ok == true) await JamService.deletePerson(person.id);
                     },
-                    child: const Icon(LucideIcons.userMinus,
-                        size: 15, color: PesowiseColors.muted),
+                    child: const Icon(
+                      WalletIcons.userMinus,
+                      size: 15,
+                      color: PesowiseColors.muted,
+                    ),
                   ),
                 ],
               ],
@@ -352,36 +445,53 @@ class _PersonCard extends StatelessWidget {
           // Expense rows
           if (expenses.isNotEmpty) ...[
             const Divider(height: 1, color: PesowiseColors.blushBorder),
-            ...expenses.map((e) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                  child: Row(
-                    children: [
-                      const Icon(LucideIcons.receipt,
-                          size: 13, color: PesowiseColors.muted),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child: Text(e.description,
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  color: PesowiseColors.strong,
-                                  fontWeight: FontWeight.w500))),
-                      Text(Formatters.currency(e.amount),
-                          style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: PesowiseColors.strong)),
-                      if (!isSettled) ...[
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () => JamService.deleteExpense(e.id),
-                          child: const Icon(LucideIcons.x,
-                              size: 13, color: PesowiseColors.muted),
+            ...expenses.map(
+              (e) => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      WalletIcons.receipt,
+                      size: 13,
+                      color: PesowiseColors.muted,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        e.description,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: PesowiseColors.strong,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
+                      ),
+                    ),
+                    Text(
+                      Formatters.currency(e.amount),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: PesowiseColors.strong,
+                      ),
+                    ),
+                    if (!isSettled) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => JamService.deleteExpense(e.id),
+                        child: const Icon(
+                          WalletIcons.x,
+                          size: 13,
+                          color: PesowiseColors.muted,
+                        ),
+                      ),
                     ],
-                  ),
-                )),
+                  ],
+                ),
+              ),
+            ),
           ],
 
           // Add expenses button
@@ -389,30 +499,34 @@ class _PersonCard extends StatelessWidget {
             const Divider(height: 1, color: PesowiseColors.blushBorder),
             GestureDetector(
               onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => AddJamPersonScreen(
-                            sessionId: sessionId,
-                            existingPersonId:   person.id,
-                            existingPersonName: person.name,
-                            isOwner: person.isOwner,
-                          ))),
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddJamPersonScreen(
+                    sessionId: sessionId,
+                    existingPersonId: person.id,
+                    existingPersonName: person.name,
+                    isOwner: person.isOwner,
+                  ),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.plusCircle,
-                        size: 13, color: PesowiseColors.accent),
+                    const Icon(
+                      WalletIcons.plusCircle,
+                      size: 13,
+                      color: PesowiseColors.accent,
+                    ),
                     const SizedBox(width: 6),
                     Text(
-                      expenses.isEmpty
-                          ? 'Add expenses'
-                          : 'Add more expenses',
+                      expenses.isEmpty ? 'Add expenses' : 'Add more expenses',
                       style: const TextStyle(
-                          fontSize: 12,
-                          color: PesowiseColors.accent,
-                          fontWeight: FontWeight.w600),
+                        fontSize: 12,
+                        color: PesowiseColors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -436,17 +550,23 @@ class _Stat extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: PesowiseColors.white.withOpacity(0.8))),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            color: PesowiseColors.white.withValues(alpha: 0.8),
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(value,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: PesowiseColors.white)),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: PesowiseColors.white,
+          ),
+        ),
       ],
     );
   }
@@ -477,7 +597,7 @@ class _SettleSheetState extends State<_SettleSheet> {
   Widget build(BuildContext context) {
     final transfers = JamService.calculateSettlement(widget.sessionId);
     final summaries = JamService.getPersonSummaries(widget.sessionId);
-    final wallets   = WalletService.getAll();
+    final wallets = WalletService.getAll();
 
     return Container(
       decoration: const BoxDecoration(
@@ -485,7 +605,9 @@ class _SettleSheetState extends State<_SettleSheet> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.only(
-        left: 24, right: 24, top: 24,
+        left: 24,
+        right: 24,
+        top: 24,
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: SingleChildScrollView(
@@ -495,91 +617,123 @@ class _SettleSheetState extends State<_SettleSheet> {
           children: [
             Center(
               child: Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
-                    color: PesowiseColors.blushBorder,
-                    borderRadius: BorderRadius.circular(2)),
+                  color: PesowiseColors.blushBorder,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Settle Up 🌸',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: PesowiseColors.strong)),
+            const Text(
+              'Settle Up 🌸',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: PesowiseColors.strong,
+              ),
+            ),
             const SizedBox(height: 4),
-            Text('${Formatters.currency(widget.fairShare)} per person',
-                style: const TextStyle(
-                    fontSize: 13,
-                    color: PesowiseColors.muted,
-                    fontWeight: FontWeight.w500)),
+            Text(
+              '${Formatters.currency(widget.fairShare)} per person',
+              style: const TextStyle(
+                fontSize: 13,
+                color: PesowiseColors.muted,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 20),
 
             // Simplified transfers
-            const Text('Who pays who:',
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: PesowiseColors.muted)),
+            const Text(
+              'Who pays who:',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: PesowiseColors.muted,
+              ),
+            ),
             const SizedBox(height: 10),
 
             if (transfers.isEmpty)
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                    color: PesowiseColors.chipBg,
-                    borderRadius: BorderRadius.circular(12)),
+                  color: PesowiseColors.chipBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: const Row(
                   children: [
-                    Icon(LucideIcons.checkCircle2,
-                        size: 14, color: PesowiseColors.strong),
+                    Icon(
+                      WalletIcons.checkCircle2,
+                      size: 14,
+                      color: PesowiseColors.strong,
+                    ),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                          'Everyone paid equally — no transfers needed!',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: PesowiseColors.strong)),
+                        'Everyone paid equally — no transfers needed!',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: PesowiseColors.strong,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               )
             else
-              ...transfers.map((t) => Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                        color: PesowiseColors.chipBg,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(t.from,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: PesowiseColors.strong)),
+              ...transfers.map(
+                (t) => Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: PesowiseColors.chipBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          t.from,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: PesowiseColors.strong,
+                          ),
                         ),
-                        const Icon(LucideIcons.arrowRight,
-                            size: 14, color: PesowiseColors.muted),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(t.to,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: PesowiseColors.strong)),
+                      ),
+                      const Icon(
+                        WalletIcons.arrowRight,
+                        size: 14,
+                        color: PesowiseColors.muted,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          t.to,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: PesowiseColors.strong,
+                          ),
                         ),
-                        Text(Formatters.currency(t.amount),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                                color: PesowiseColors.strong)),
-                      ],
-                    ),
-                  )),
+                      ),
+                      Text(
+                        Formatters.currency(t.amount),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: PesowiseColors.strong,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             const SizedBox(height: 12),
 
@@ -591,16 +745,18 @@ class _SettleSheetState extends State<_SettleSheet> {
                   Text(
                     _showBreakdown ? 'Hide breakdown' : 'View full breakdown',
                     style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: PesowiseColors.accent),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: PesowiseColors.accent,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
                     _showBreakdown
-                        ? LucideIcons.chevronUp
-                        : LucideIcons.chevronDown,
-                    size: 14, color: PesowiseColors.accent,
+                        ? WalletIcons.chevronUp
+                        : WalletIcons.chevronDown,
+                    size: 14,
+                    color: PesowiseColors.accent,
                   ),
                 ],
               ),
@@ -617,15 +773,57 @@ class _SettleSheetState extends State<_SettleSheet> {
                 child: Column(
                   children: [
                     // Table header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       child: Row(
-                        children: const [
-                          Expanded(flex: 2, child: Text('Name',    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: PesowiseColors.muted))),
-                          Expanded(         child: Text('Paid',    textAlign: TextAlign.right, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: PesowiseColors.muted))),
-                          Expanded(         child: Text('Share',   textAlign: TextAlign.right, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: PesowiseColors.muted))),
-                          Expanded(         child: Text('Balance', textAlign: TextAlign.right, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: PesowiseColors.muted))),
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Name',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: PesowiseColors.muted,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Paid',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: PesowiseColors.muted,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Share',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: PesowiseColors.muted,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Balance',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: PesowiseColors.muted,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -636,45 +834,58 @@ class _SettleSheetState extends State<_SettleSheet> {
                           : '-${Formatters.currency(s.balance.abs())}';
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         child: Row(
                           children: [
                             Expanded(
                               flex: 2,
                               child: Text(
-                                  s.person.isOwner
-                                      ? '${s.person.name} (you)'
-                                      : s.person.name,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: PesowiseColors.strong)),
+                                s.person.isOwner
+                                    ? '${s.person.name} (you)'
+                                    : s.person.name,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: PesowiseColors.strong,
+                                ),
+                              ),
                             ),
                             Expanded(
-                              child: Text(Formatters.currency(s.totalPaid),
-                                  textAlign: TextAlign.right,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: PesowiseColors.strong)),
+                              child: Text(
+                                Formatters.currency(s.totalPaid),
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: PesowiseColors.strong,
+                                ),
+                              ),
                             ),
                             Expanded(
-                              child: Text(Formatters.currency(s.fairShare),
-                                  textAlign: TextAlign.right,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: PesowiseColors.strong)),
+                              child: Text(
+                                Formatters.currency(s.fairShare),
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: PesowiseColors.strong,
+                                ),
+                              ),
                             ),
                             Expanded(
-                              child: Text(balStr,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      color: s.balance >= 0
-                                          ? const Color(0xFF7EBD8B)
-                                          : PesowiseColors.strong)),
+                              child: Text(
+                                balStr,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: s.balance >= 0
+                                      ? const Color(0xFF7EBD8B)
+                                      : PesowiseColors.strong,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -688,15 +899,20 @@ class _SettleSheetState extends State<_SettleSheet> {
             const SizedBox(height: 20),
 
             // Wallet selector
-            const Text('Log my share to:',
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: PesowiseColors.muted)),
+            const Text(
+              'Log my share to:',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: PesowiseColors.muted,
+              ),
+            ),
             const SizedBox(height: 8),
             if (wallets.isEmpty)
-              const Text('Please add a wallet first.',
-                  style: TextStyle(color: PesowiseColors.muted, fontSize: 13))
+              const Text(
+                'Please add a wallet first.',
+                style: TextStyle(color: PesowiseColors.muted, fontSize: 13),
+              )
             else
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -711,14 +927,18 @@ class _SettleSheetState extends State<_SettleSheet> {
                     isExpanded: true,
                     dropdownColor: PesowiseColors.white,
                     style: const TextStyle(
-                        color: PesowiseColors.strong,
-                        fontWeight: FontWeight.w600),
+                      color: PesowiseColors.strong,
+                      fontWeight: FontWeight.w600,
+                    ),
                     items: wallets
-                        .map((w) => DropdownMenuItem(
-                            value: w.id, child: Text(w.name)))
+                        .map(
+                          (w) => DropdownMenuItem(
+                            value: w.id,
+                            child: Text(w.name),
+                          ),
+                        )
                         .toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedWalletId = val),
+                    onChanged: (val) => setState(() => _selectedWalletId = val),
                   ),
                 ),
               ),
@@ -732,7 +952,9 @@ class _SettleSheetState extends State<_SettleSheet> {
                     ? null
                     : () async {
                         await JamService.settleSession(
-                            widget.sessionId, _selectedWalletId!);
+                          widget.sessionId,
+                          _selectedWalletId!,
+                        );
                         if (context.mounted) Navigator.pop(context);
                       },
                 style: ElevatedButton.styleFrom(
@@ -740,12 +962,14 @@ class _SettleSheetState extends State<_SettleSheet> {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('Confirm & Settle',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 16)),
+                child: const Text(
+                  'Confirm & Settle',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                ),
               ),
             ),
           ],

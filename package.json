@@ -1,0 +1,7 @@
+{
+  "name": "hermyonies-wallet-assistant",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": { "test": "node --test test/assistant.test.mjs" }
+}

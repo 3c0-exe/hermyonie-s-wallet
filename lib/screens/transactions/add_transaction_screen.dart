@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../models/wallet.dart';
 import '../../services/transaction_service.dart';
@@ -7,7 +7,6 @@ import '../../services/wallet_service.dart';
 import '../../utils/categories.dart';
 import '../../utils/spending_nudge.dart';
 import '../../widgets/nudge_dialog.dart';
-
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -55,36 +54,40 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (picked != null) setState(() => _selectedDate = picked);
   }
 
-void _save() async {
-  final label = _labelController.text.trim();
-  final amountText = _amountController.text.trim();
+  void _save() async {
+    final label = _labelController.text.trim();
+    final amountText = _amountController.text.trim();
 
-  if (label.isEmpty || amountText.isEmpty || _selectedWalletId == null) return;
-
-  final amount = double.tryParse(amountText);
-  if (amount == null || amount <= 0) return;
-
-  await TransactionService.add(
-    walletId: _selectedWalletId!,
-    label: label,
-    amount: amount,
-    isExpense: _isExpense,
-    category: _selectedCategory,
-    date: _selectedDate,
-    note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
-  );
-
-  if (!mounted) return;
-
-  if (_isExpense) {
-    final nudge = SpendingNudge.check(_selectedCategory, amount);
-    if (nudge != null && mounted) {
-      await NudgeDialog.show(context, nudge, _selectedCategory);
+    if (label.isEmpty || amountText.isEmpty || _selectedWalletId == null) {
+      return;
     }
-  }
 
-  if (mounted) Navigator.pop(context, true);
-}
+    final amount = double.tryParse(amountText);
+    if (amount == null || amount <= 0) return;
+
+    await TransactionService.add(
+      walletId: _selectedWalletId!,
+      label: label,
+      amount: amount,
+      isExpense: _isExpense,
+      category: _selectedCategory,
+      date: _selectedDate,
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (_isExpense) {
+      final nudge = SpendingNudge.check(_selectedCategory, amount);
+      if (nudge != null && mounted) {
+        await NudgeDialog.show(context, nudge, _selectedCategory);
+      }
+    }
+
+    if (mounted) Navigator.pop(context, true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,14 +102,17 @@ void _save() async {
         backgroundColor: PesowiseColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: PesowiseColors.strong),
+          icon: const Icon(WalletIcons.arrowLeft, color: PesowiseColors.strong),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New Transaction',
-            style: TextStyle(
-                color: PesowiseColors.strong,
-                fontWeight: FontWeight.w700,
-                fontSize: 18)),
+        title: const Text(
+          'New Transaction',
+          style: TextStyle(
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -131,9 +137,14 @@ void _save() async {
 
             _label('Amount'),
             const SizedBox(height: 8),
-            _input(_amountController, '0.00',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                prefix: '₱ '),
+            _input(
+              _amountController,
+              '0.00',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              prefix: '₱ ',
+            ),
             const SizedBox(height: 16),
 
             _label('Description'),
@@ -157,19 +168,31 @@ void _save() async {
                   onTap: () => setState(() => _selectedCategory = cat),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: isSelected ? PesowiseColors.strong : PesowiseColors.chipBg,
+                      color: isSelected
+                          ? PesowiseColors.strong
+                          : PesowiseColors.chipBg,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? PesowiseColors.strong : PesowiseColors.blushBorder,
+                        color: isSelected
+                            ? PesowiseColors.strong
+                            : PesowiseColors.blushBorder,
                       ),
                     ),
-                    child: Text(cat,
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isSelected ? PesowiseColors.white : PesowiseColors.strong)),
+                    child: Text(
+                      cat,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? PesowiseColors.white
+                            : PesowiseColors.strong,
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
@@ -181,7 +204,10 @@ void _save() async {
             GestureDetector(
               onTap: _pickDate,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: PesowiseColors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -189,13 +215,18 @@ void _save() async {
                 ),
                 child: Row(
                   children: [
-                    const Icon(LucideIcons.calendar,
-                        size: 16, color: PesowiseColors.muted),
+                    const Icon(
+                      WalletIcons.calendar,
+                      size: 16,
+                      color: PesowiseColors.muted,
+                    ),
                     const SizedBox(width: 10),
                     Text(
                       '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                       style: const TextStyle(
-                          color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+                        color: PesowiseColors.strong,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -217,11 +248,14 @@ void _save() async {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('Save Transaction',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                child: const Text(
+                  'Save Transaction',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -243,12 +277,15 @@ void _save() async {
             color: isActive ? PesowiseColors.strong : Colors.transparent,
             borderRadius: BorderRadius.circular(9),
           ),
-          child: Text(label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: isActive ? PesowiseColors.white : PesowiseColors.muted)),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+              color: isActive ? PesowiseColors.white : PesowiseColors.muted,
+            ),
+          ),
         ),
       ),
     );
@@ -268,25 +305,34 @@ void _save() async {
           isExpanded: true,
           dropdownColor: PesowiseColors.white,
           style: const TextStyle(
-              color: PesowiseColors.strong, fontWeight: FontWeight.w600),
-          items: _wallets.map((w) => DropdownMenuItem(
-            value: w.id,
-            child: Text(w.name),
-          )).toList(),
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w600,
+          ),
+          items: _wallets
+              .map((w) => DropdownMenuItem(value: w.id, child: Text(w.name)))
+              .toList(),
           onChanged: (val) => setState(() => _selectedWalletId = val),
         ),
       ),
     );
   }
 
-  Widget _label(String text) => Text(text,
-      style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: PesowiseColors.muted));
+  Widget _label(String text) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: PesowiseColors.muted,
+    ),
+  );
 
-  Widget _input(TextEditingController controller, String hint,
-      {TextInputType? keyboardType, String? prefix, int maxLines = 1}) {
+  Widget _input(
+    TextEditingController controller,
+    String hint, {
+    TextInputType? keyboardType,
+    String? prefix,
+    int maxLines = 1,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: PesowiseColors.white,
@@ -298,16 +344,22 @@ void _save() async {
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(
-            color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+          color: PesowiseColors.strong,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           hintText: hint,
           prefixText: prefix,
           prefixStyle: const TextStyle(
-              color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w600,
+          ),
           hintStyle: const TextStyle(color: PesowiseColors.muted),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../core/theme.dart';
 import '../models/wallet.dart';
 import '../utils/formatters.dart';
@@ -39,58 +39,77 @@ class WalletCard extends StatelessWidget {
                 color: PesowiseColors.chipBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(_getIcon(wallet.icon), color: PesowiseColors.strong, size: 22),
+              child: Icon(
+                _getIcon(wallet.icon),
+                color: PesowiseColors.strong,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(wallet.name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: PesowiseColors.strong)),
+                  Text(
+                    wallet.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: PesowiseColors.strong,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text('Balance',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          color: PesowiseColors.muted,
-                          fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Balance',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: PesowiseColors.muted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(Formatters.currency(wallet.balance),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: PesowiseColors.strong)),
-Row(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    if (onEdit != null)
-      GestureDetector(
-        onTap: onEdit,
-        child: const Padding(
-          padding: EdgeInsets.only(top: 4, right: 10),
-          child: Icon(LucideIcons.pencil,
-              size: 14, color: PesowiseColors.muted),
-        ),
-      ),
-            if (onDelete != null)
-              GestureDetector(
-                onTap: onDelete,
-                child: const Padding(
-                  padding: EdgeInsets.only(top: 4),
-                  child: Icon(LucideIcons.trash2,
-                      size: 14, color: PesowiseColors.muted),
+                Text(
+                  Formatters.currency(wallet.balance),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: PesowiseColors.strong,
+                  ),
                 ),
-              ),
-          ],
-        ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (onEdit != null)
+                      GestureDetector(
+                        onTap: onEdit,
+                        child: const Padding(
+                          padding: EdgeInsets.only(top: 4, right: 10),
+                          child: Icon(
+                            WalletIcons.pencil,
+                            size: 14,
+                            color: PesowiseColors.muted,
+                          ),
+                        ),
+                      ),
+                    if (onDelete != null)
+                      GestureDetector(
+                        onTap: onDelete,
+                        child: const Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: Icon(
+                            WalletIcons.trash2,
+                            size: 14,
+                            color: PesowiseColors.muted,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -101,12 +120,18 @@ Row(
 
   IconData _getIcon(String iconName) {
     switch (iconName) {
-      case 'wallet': return LucideIcons.wallet;
-      case 'smartphone': return LucideIcons.smartphone;
-      case 'building': return LucideIcons.building2;
-      case 'piggy-bank': return LucideIcons.piggyBank;
-      case 'credit-card': return LucideIcons.creditCard;
-      default: return LucideIcons.wallet;
+      case 'wallet':
+        return WalletIcons.wallet;
+      case 'smartphone':
+        return WalletIcons.smartphone;
+      case 'building':
+        return WalletIcons.building2;
+      case 'piggy-bank':
+        return WalletIcons.piggyBank;
+      case 'credit-card':
+        return WalletIcons.creditCard;
+      default:
+        return WalletIcons.wallet;
     }
   }
 }

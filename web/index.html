@@ -51,7 +51,7 @@
   <link rel="shortcut icon" href="icons/favicon.ico">
 
   <!-- Viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- Prevent iOS callouts and selection on tap -->
   <style>
@@ -61,69 +61,35 @@
       overscroll-behavior-y: none;
       -webkit-tap-highlight-color: transparent;
     }
+    #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: system-ui, sans-serif; color: #632A44; background: #FCF8FA; }
+    #loading .mark { font-size: 48px; }
+    #loading h1 { font-size: 22px; letter-spacing: -.5px; margin-bottom: 6px; }
+    #loading p { color: #756571; font-size: 14px; }
   </style>
 </head>
 <body>
+  <div id="loading" role="status" aria-label="Loading your wallet">
+    <div class="mark">♡</div><h1>Hermyonie’s Wallet</h1><p>A little clarity, every day.</p>
+  </div>
   <script>
-    var serviceWorkerVersion = null;
-    var scriptLoaded = false;
-    function loadMainDartJs() {
-      if (scriptLoaded) {
-        return;
-      }
-      scriptLoaded = true;
-      var scriptTag = document.createElement('script');
-      scriptTag.src = 'main.dart.js';
-      scriptTag.type = 'application/javascript';
-      document.body.append(scriptTag);
-    }
-
-    if ('serviceWorker' in navigator) {
-      // Service workers are supported. Use them.
-      window.addEventListener('load', function () {
-        // Register Firebase Messaging Service Worker if applicable
-        navigator.serviceWorker.register('flutter_service_worker.js?v=' + serviceWorkerVersion)
-          .then((reg) => {
-            function waitForActivation(serviceWorker) {
-              serviceWorker.addEventListener('statechange', () => {
-                if (serviceWorker.state == 'activated') {
-                  console.log('Installed new service worker.');
-                  loadMainDartJs();
-                }
-              });
-            }
-            if (!reg.active && (reg.installing || reg.waiting)) {
-              // No active web worker and we have installed or are installing
-              // one for the first time. Simply wait for it to activate.
-              waitForActivation(reg.installing ?? reg.waiting);
-            } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
-              // When the app updates the serviceWorkerVersion changes, so we
-              // need to ask the service worker to update.
-              console.log('New service worker available.');
-              reg.update();
-              waitForActivation(reg.installing);
-            } else {
-              // Existing service worker is still good.
-              console.log('Loading app from service worker.');
-              loadMainDartJs();
-            }
-          });
-
-        // If service worker doesn't succeed in a reasonable amount of time,
-        // fallback to plaint <script> tag.
-        setTimeout(() => {
-          if (!scriptLoaded) {
-            console.warn(
-              'Failed to load app from service worker. Falling back to plain <script> tag.',
-            );
-            loadMainDartJs();
+    // Remove legacy Flutter caches, while keeping IndexedDB wallet records intact.
+    (async function () {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const reg of registrations) {
+            if ((reg.active?.scriptURL || reg.waiting?.scriptURL || '').includes('flutter_service_worker')) await reg.unregister();
           }
-        }, 4000);
-      });
-    } else {
-      // Service workers not supported. Just drop the <script> tag.
-      loadMainDartJs();
-    }
+        }
+        if ('caches' in window) {
+          for (const key of await caches.keys()) if (key.startsWith('flutter-')) await caches.delete(key);
+        }
+      } catch (_) {}
+      const script = document.createElement('script');
+      script.src = 'flutter_bootstrap.js'; script.async = true;
+      document.body.appendChild(script);
+    })();
+    window.addEventListener('flutter-first-frame', function () { document.getElementById('loading')?.remove(); });
   </script>
 </body>
 </html>

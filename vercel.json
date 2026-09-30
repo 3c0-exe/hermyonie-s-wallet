@@ -1,6 +1,15 @@
 {
-  "buildCommand": "flutter/bin/flutter build web --release --base-href /",
+  "installCommand": "bash scripts/install-flutter.sh",
+  "buildCommand": "bash scripts/build-web.sh",
   "outputDirectory": "build/web",
-  "installCommand": "git clone https://github.com/flutter/flutter.git --depth 1 -b stable flutter",
-  "framework": null
+  "framework": null,
+  "functions": { "api/assistant.mjs": { "maxDuration": 30 } },
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "same-origin" }
+    ] },
+    { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/:file(index.html|flutter_bootstrap.js|main.dart.js|flutter.js)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+  ]
 }

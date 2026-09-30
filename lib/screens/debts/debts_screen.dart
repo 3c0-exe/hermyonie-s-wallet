@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../core/hive_boxes.dart';
 import '../../models/debt.dart';
@@ -26,22 +26,30 @@ class DebtsScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Debts & To Pay',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: PesowiseColors.strong)),
+                  const Text(
+                    'Debts & To Pay',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: PesowiseColors.strong,
+                    ),
+                  ),
                   GestureDetector(
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const AddDebtScreen())),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AddDebtScreen()),
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: PesowiseColors.strong,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(LucideIcons.plus,
-                          color: PesowiseColors.white, size: 20),
+                      child: const Icon(
+                        WalletIcons.plus,
+                        color: PesowiseColors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -51,11 +59,14 @@ class DebtsScreen extends StatelessWidget {
                 valueListenable: Hive.box<Debt>(HiveBoxes.debts).listenable(),
                 builder: (context, box, _) {
                   final total = DebtService.getTotalDebt();
-                  return Text('Total owed: ${Formatters.currency(total)}',
-                      style: const TextStyle(
-                          fontSize: 13,
-                          color: PesowiseColors.muted,
-                          fontWeight: FontWeight.w600));
+                  return Text(
+                    'Total owed: ${Formatters.currency(total)}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: PesowiseColors.muted,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 20),
@@ -65,22 +76,32 @@ class DebtsScreen extends StatelessWidget {
                   builder: (context, box, _) {
                     final debts = DebtService.getAll();
                     if (debts.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.checkCircle2,
-                                size: 48, color: PesowiseColors.accent),
-                            const SizedBox(height: 12),
-                            const Text("You're all clear!",
-                                style: TextStyle(
-                                    color: PesowiseColors.muted,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15)),
-                            const SizedBox(height: 4),
-                            const Text('No unpaid debts',
-                                style: TextStyle(
-                                    color: PesowiseColors.muted, fontSize: 13)),
+                            Icon(
+                              WalletIcons.checkCircle2,
+                              size: 48,
+                              color: PesowiseColors.accent,
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              "You're all clear!",
+                              style: TextStyle(
+                                color: PesowiseColors.muted,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'No unpaid debts',
+                              style: TextStyle(
+                                color: PesowiseColors.muted,
+                                fontSize: 13,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -115,7 +136,11 @@ class _DebtTile extends StatelessWidget {
 
   String get _walletName {
     final wallets = WalletService.getAll();
-    return wallets.where((w) => w.id == debt.walletId).map((w) => w.name).firstOrNull ?? '—';
+    return wallets
+            .where((w) => w.id == debt.walletId)
+            .map((w) => w.name)
+            .firstOrNull ??
+        '—';
   }
 
   @override
@@ -126,7 +151,9 @@ class _DebtTile extends StatelessWidget {
         color: PesowiseColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _isOverdue ? PesowiseColors.strong : PesowiseColors.blushBorder,
+          color: _isOverdue
+              ? PesowiseColors.strong
+              : PesowiseColors.blushBorder,
           width: _isOverdue ? 1.5 : 1,
         ),
       ),
@@ -147,7 +174,9 @@ class _DebtTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(11),
                   ),
                   child: Icon(
-                    debt.isRecurring ? LucideIcons.repeat : LucideIcons.alertCircle,
+                    debt.isRecurring
+                        ? WalletIcons.repeat
+                        : WalletIcons.alertCircle,
                     color: PesowiseColors.strong,
                     size: 18,
                   ),
@@ -160,43 +189,58 @@ class _DebtTile extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(debt.label,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                    color: PesowiseColors.strong)),
+                            child: Text(
+                              debt.label,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                color: PesowiseColors.strong,
+                              ),
+                            ),
                           ),
                           if (debt.isRecurring)
                             Container(
                               margin: const EdgeInsets.only(left: 6),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: PesowiseColors.chipBg,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text('Monthly',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: PesowiseColors.strong)),
+                              child: const Text(
+                                'Monthly',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: PesowiseColors.strong,
+                                ),
+                              ),
                             ),
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(debt.creditor,
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: PesowiseColors.muted,
-                              fontWeight: FontWeight.w500)),
+                      Text(
+                        debt.creditor,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: PesowiseColors.muted,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(Formatters.currency(debt.amount),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: PesowiseColors.strong)),
+                Text(
+                  Formatters.currency(debt.amount),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: PesowiseColors.strong,
+                  ),
+                ),
               ],
             ),
 
@@ -204,29 +248,41 @@ class _DebtTile extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(LucideIcons.wallet, size: 12, color: PesowiseColors.muted),
+                const Icon(
+                  WalletIcons.wallet,
+                  size: 12,
+                  color: PesowiseColors.muted,
+                ),
                 const SizedBox(width: 4),
-                Text(_walletName,
-                    style: const TextStyle(
-                        fontSize: 11,
-                        color: PesowiseColors.muted,
-                        fontWeight: FontWeight.w500)),
+                Text(
+                  _walletName,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: PesowiseColors.muted,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 if (debt.dueDate != null) ...[
                   const SizedBox(width: 12),
-                  Icon(LucideIcons.calendar,
-                      size: 12,
-                      color: _isOverdue ? PesowiseColors.strong : PesowiseColors.muted),
+                  Icon(
+                    WalletIcons.calendar,
+                    size: 12,
+                    color: _isOverdue
+                        ? PesowiseColors.strong
+                        : PesowiseColors.muted,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     _isOverdue
                         ? 'Overdue · ${Formatters.date(debt.dueDate!)}'
                         : 'Due ${Formatters.date(debt.dueDate!)}',
                     style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: _isOverdue
-                            ? PesowiseColors.strong
-                            : PesowiseColors.muted),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: _isOverdue
+                          ? PesowiseColors.strong
+                          : PesowiseColors.muted,
+                    ),
                   ),
                 ],
               ],
@@ -234,11 +290,14 @@ class _DebtTile extends StatelessWidget {
 
             if (debt.note != null && debt.note!.isNotEmpty) ...[
               const SizedBox(height: 6),
-              Text(debt.note!,
-                  style: const TextStyle(
-                      fontSize: 11,
-                      color: PesowiseColors.muted,
-                      fontWeight: FontWeight.w500)),
+              Text(
+                debt.note!,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: PesowiseColors.muted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
 
             const SizedBox(height: 12),
@@ -256,23 +315,34 @@ class _DebtTile extends StatelessWidget {
                         builder: (_) => AlertDialog(
                           backgroundColor: PesowiseColors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          title: const Text('Mark as paid?',
-                              style: TextStyle(
-                                  color: PesowiseColors.strong,
-                                  fontWeight: FontWeight.w700)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Text(
+                            'Mark as paid?',
+                            style: TextStyle(
+                              color: PesowiseColors.strong,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           content: Text(
-                              '${Formatters.currency(debt.amount)} will be logged as an expense from $_walletName.',
-                              style: const TextStyle(color: PesowiseColors.muted)),
+                            '${Formatters.currency(debt.amount)} will be logged as an expense from $_walletName.',
+                            style: const TextStyle(color: PesowiseColors.muted),
+                          ),
                           actions: [
                             TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancel',
-                                    style: TextStyle(color: PesowiseColors.muted))),
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: PesowiseColors.muted),
+                              ),
+                            ),
                             TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text('Mark Paid',
-                                    style: TextStyle(color: PesowiseColors.strong))),
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text(
+                                'Mark Paid',
+                                style: TextStyle(color: PesowiseColors.strong),
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -289,14 +359,20 @@ class _DebtTile extends StatelessWidget {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(LucideIcons.checkCircle2,
-                              size: 14, color: PesowiseColors.white),
+                          Icon(
+                            WalletIcons.checkCircle2,
+                            size: 14,
+                            color: PesowiseColors.white,
+                          ),
                           SizedBox(width: 6),
-                          Text('Mark as Paid',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: PesowiseColors.white)),
+                          Text(
+                            'Mark as Paid',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: PesowiseColors.white,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -310,23 +386,34 @@ class _DebtTile extends StatelessWidget {
                       builder: (_) => AlertDialog(
                         backgroundColor: PesowiseColors.white,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        title: const Text('Delete debt?',
-                            style: TextStyle(
-                                color: PesowiseColors.strong,
-                                fontWeight: FontWeight.w700)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        title: const Text(
+                          'Delete debt?',
+                          style: TextStyle(
+                            color: PesowiseColors.strong,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                         content: const Text(
-                            'This removes the debt without logging a transaction.',
-                            style: TextStyle(color: PesowiseColors.muted)),
+                          'This removes the debt without logging a transaction.',
+                          style: TextStyle(color: PesowiseColors.muted),
+                        ),
                         actions: [
                           TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Cancel',
-                                  style: TextStyle(color: PesowiseColors.muted))),
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: PesowiseColors.muted),
+                            ),
+                          ),
                           TextButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Delete',
-                                  style: TextStyle(color: PesowiseColors.strong))),
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: PesowiseColors.strong),
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -335,13 +422,19 @@ class _DebtTile extends StatelessWidget {
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 14),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 9,
+                      horizontal: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: PesowiseColors.chipBg,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(LucideIcons.trash2,
-                        size: 15, color: PesowiseColors.muted),
+                    child: const Icon(
+                      WalletIcons.trash2,
+                      size: 15,
+                      color: PesowiseColors.muted,
+                    ),
                   ),
                 ),
               ],

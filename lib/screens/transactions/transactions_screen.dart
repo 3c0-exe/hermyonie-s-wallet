@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../core/hive_boxes.dart';
 import '../../models/transaction.dart';
@@ -25,23 +25,32 @@ class TransactionsScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Transactions',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: PesowiseColors.strong)),
+                  const Text(
+                    'Transactions',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: PesowiseColors.strong,
+                    ),
+                  ),
                   GestureDetector(
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(
-                            builder: (_) => const AddTransactionScreen())),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AddTransactionScreen(),
+                      ),
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: PesowiseColors.strong,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(LucideIcons.plus,
-                          color: PesowiseColors.white, size: 20),
+                      child: const Icon(
+                        WalletIcons.plus,
+                        color: PesowiseColors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -49,27 +58,38 @@ class TransactionsScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable:
-                      Hive.box<Transaction>(HiveBoxes.transactions).listenable(),
+                  valueListenable: Hive.box<Transaction>(
+                    HiveBoxes.transactions,
+                  ).listenable(),
                   builder: (context, box, _) {
                     final transactions = TransactionService.getAll();
                     if (transactions.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.receipt,
-                                size: 48, color: PesowiseColors.accent),
-                            const SizedBox(height: 12),
-                            const Text('No transactions yet',
-                                style: TextStyle(
-                                    color: PesowiseColors.muted,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15)),
-                            const SizedBox(height: 4),
-                            const Text('Tap + to log your first transaction',
-                                style: TextStyle(
-                                    color: PesowiseColors.muted, fontSize: 13)),
+                            Icon(
+                              WalletIcons.receipt,
+                              size: 48,
+                              color: PesowiseColors.accent,
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'No transactions yet',
+                              style: TextStyle(
+                                color: PesowiseColors.muted,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Tap + to log your first transaction',
+                              style: TextStyle(
+                                color: PesowiseColors.muted,
+                                fontSize: 13,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -84,27 +104,39 @@ class TransactionsScreen extends StatelessWidget {
                             builder: (_) => AlertDialog(
                               backgroundColor: PesowiseColors.white,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              title: const Text('Delete transaction?',
-                                  style: TextStyle(
-                                      color: PesowiseColors.strong,
-                                      fontWeight: FontWeight.w700)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              title: const Text(
+                                'Delete transaction?',
+                                style: TextStyle(
+                                  color: PesowiseColors.strong,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                               content: const Text(
-                                  'This will also reverse the wallet balance.',
-                                  style: TextStyle(color: PesowiseColors.muted)),
+                                'This will also reverse the wallet balance.',
+                                style: TextStyle(color: PesowiseColors.muted),
+                              ),
                               actions: [
                                 TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                    child: const Text('Cancel',
-                                        style: TextStyle(
-                                            color: PesowiseColors.muted))),
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      color: PesowiseColors.muted,
+                                    ),
+                                  ),
+                                ),
                                 TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, true),
-                                    child: const Text('Delete',
-                                        style: TextStyle(
-                                            color: PesowiseColors.strong))),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: PesowiseColors.strong,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           );

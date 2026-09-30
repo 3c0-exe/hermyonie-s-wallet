@@ -30,4 +30,21 @@ class Debt extends HiveObject {
 
   @HiveField(8)
   late DateTime createdAt;
+
+  @HiveField(9)
+  double? installmentAmount;
+  @HiveField(10)
+  double? totalAmount;
+  @HiveField(11, defaultValue: 0.0)
+  double paidAmount = 0;
+  @HiveField(12, defaultValue: false)
+  bool isPaid = false;
+
+  @HiveField(13)
+  int? anchorDay;
+
+  double get nextPayment =>
+      installmentAmount != null && installmentAmount! < amount
+      ? installmentAmount!
+      : amount;
 }

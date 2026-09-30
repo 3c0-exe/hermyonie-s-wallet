@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../core/theme.dart';
 
 class PesowiseBottomNav extends StatelessWidget {
@@ -25,11 +25,41 @@ class PesowiseBottomNav extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(icon: LucideIcons.layoutDashboard, label: 'Home',         index: 0, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.wallet,           label: 'Wallets',      index: 1, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.list,             label: 'Transactions', index: 2, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.alertCircle,      label: 'Debts',        index: 3, currentIndex: currentIndex, onTap: onTap),
-              _NavItem(icon: LucideIcons.barChart2,        label: 'Reports',      index: 4, currentIndex: currentIndex, onTap: onTap),
+              _NavItem(
+                icon: WalletIcons.layoutDashboard,
+                label: 'Home',
+                index: 0,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
+              _NavItem(
+                icon: WalletIcons.wallet,
+                label: 'Wallets',
+                index: 1,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
+              _NavItem(
+                icon: WalletIcons.list,
+                label: 'Transactions',
+                index: 2,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
+              _NavItem(
+                icon: WalletIcons.alertCircle,
+                label: 'Debts',
+                index: 3,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
+              _NavItem(
+                icon: WalletIcons.barChart2,
+                label: 'Reports',
+                index: 4,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
             ],
           ),
         ),
@@ -64,7 +94,11 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 21, color: isActive ? PesowiseColors.strong : PesowiseColors.muted),
+            Icon(
+              icon,
+              size: 21,
+              color: isActive ? PesowiseColors.strong : PesowiseColors.muted,
+            ),
             const SizedBox(height: 4),
             Text(
               label,

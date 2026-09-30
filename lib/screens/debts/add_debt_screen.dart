@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hermyonies_girl_math/core/icons.dart';
 import '../../core/theme.dart';
 import '../../services/debt_service.dart';
 import '../../services/wallet_service.dart';
@@ -13,10 +13,10 @@ class AddDebtScreen extends StatefulWidget {
 }
 
 class _AddDebtScreenState extends State<AddDebtScreen> {
-  final _labelController    = TextEditingController();
-  final _amountController   = TextEditingController();
+  final _labelController = TextEditingController();
+  final _amountController = TextEditingController();
   final _creditorController = TextEditingController();
-  final _noteController     = TextEditingController();
+  final _noteController = TextEditingController();
 
   DateTime? _dueDate;
   bool _isRecurring = false;
@@ -51,20 +51,28 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
   }
 
   void _save() async {
-    final label    = _labelController.text.trim();
+    final label = _labelController.text.trim();
     final creditor = _creditorController.text.trim();
-    final amount   = double.tryParse(_amountController.text.trim());
+    final amount = double.tryParse(_amountController.text.trim());
 
-    if (label.isEmpty || creditor.isEmpty || amount == null || amount <= 0 || _selectedWalletId == null) return;
+    if (label.isEmpty ||
+        creditor.isEmpty ||
+        amount == null ||
+        amount <= 0 ||
+        _selectedWalletId == null) {
+      return;
+    }
 
     await DebtService.add(
-      label:       label,
-      amount:      amount,
-      creditor:    creditor,
-      walletId:    _selectedWalletId!,
-      dueDate:     _dueDate,
+      label: label,
+      amount: amount,
+      creditor: creditor,
+      walletId: _selectedWalletId!,
+      dueDate: _dueDate,
       isRecurring: _isRecurring,
-      note:        _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
     );
 
     if (mounted) Navigator.pop(context, true);
@@ -78,14 +86,17 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
         backgroundColor: PesowiseColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: PesowiseColors.strong),
+          icon: const Icon(WalletIcons.arrowLeft, color: PesowiseColors.strong),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New Debt',
-            style: TextStyle(
-                color: PesowiseColors.strong,
-                fontWeight: FontWeight.w700,
-                fontSize: 18)),
+        title: const Text(
+          'New Debt',
+          style: TextStyle(
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -94,7 +105,10 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
           children: [
             _label('What is it?'),
             const SizedBox(height: 8),
-            _input(_labelController, 'e.g. Electricity bill, SPayLater balance'),
+            _input(
+              _labelController,
+              'e.g. Electricity bill, SPayLater balance',
+            ),
             const SizedBox(height: 16),
 
             _label('Creditor / Source'),
@@ -104,9 +118,14 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
 
             _label('Amount Owed'),
             const SizedBox(height: 8),
-            _input(_amountController, '0.00',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                prefix: '₱ '),
+            _input(
+              _amountController,
+              '0.00',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              prefix: '₱ ',
+            ),
             const SizedBox(height: 16),
 
             _label('Pay from Wallet'),
@@ -119,7 +138,10 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
             GestureDetector(
               onTap: _pickDueDate,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: PesowiseColors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -127,24 +149,32 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(LucideIcons.calendar, size: 16, color: PesowiseColors.muted),
+                    const Icon(
+                      WalletIcons.calendar,
+                      size: 16,
+                      color: PesowiseColors.muted,
+                    ),
                     const SizedBox(width: 10),
                     Text(
                       _dueDate == null
                           ? 'Pick a due date'
                           : '${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}',
                       style: TextStyle(
-                          color: _dueDate == null
-                              ? PesowiseColors.muted
-                              : PesowiseColors.strong,
-                          fontWeight: FontWeight.w600),
+                        color: _dueDate == null
+                            ? PesowiseColors.muted
+                            : PesowiseColors.strong,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     if (_dueDate != null) ...[
                       const Spacer(),
                       GestureDetector(
                         onTap: () => setState(() => _dueDate = null),
-                        child: const Icon(LucideIcons.x,
-                            size: 14, color: PesowiseColors.muted),
+                        child: const Icon(
+                          WalletIcons.x,
+                          size: 14,
+                          color: PesowiseColors.muted,
+                        ),
                       ),
                     ],
                   ],
@@ -163,26 +193,38 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(LucideIcons.repeat, size: 16, color: PesowiseColors.muted),
+                  const Icon(
+                    WalletIcons.repeat,
+                    size: 16,
+                    color: PesowiseColors.muted,
+                  ),
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Recurring monthly',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: PesowiseColors.strong)),
-                        Text('e.g. monthly subscription, utility bill',
-                            style: TextStyle(fontSize: 11, color: PesowiseColors.muted)),
+                        Text(
+                          'Recurring monthly',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PesowiseColors.strong,
+                          ),
+                        ),
+                        Text(
+                          'e.g. monthly subscription, utility bill',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: PesowiseColors.muted,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   Switch(
                     value: _isRecurring,
                     onChanged: (val) => setState(() => _isRecurring = val),
-                    activeColor: PesowiseColors.strong,
+                    activeThumbColor: PesowiseColors.strong,
                   ),
                 ],
               ),
@@ -203,11 +245,14 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                   foregroundColor: PesowiseColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('Add Debt',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                child: const Text(
+                  'Add Debt',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -231,7 +276,9 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
           isExpanded: true,
           dropdownColor: PesowiseColors.white,
           style: const TextStyle(
-              color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w600,
+          ),
           items: _wallets
               .map((w) => DropdownMenuItem(value: w.id, child: Text(w.name)))
               .toList(),
@@ -241,12 +288,22 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
     );
   }
 
-  Widget _label(String text) => Text(text,
-      style: const TextStyle(
-          fontSize: 13, fontWeight: FontWeight.w600, color: PesowiseColors.muted));
+  Widget _label(String text) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: PesowiseColors.muted,
+    ),
+  );
 
-  Widget _input(TextEditingController controller, String hint,
-      {TextInputType? keyboardType, String? prefix, int maxLines = 1}) {
+  Widget _input(
+    TextEditingController controller,
+    String hint, {
+    TextInputType? keyboardType,
+    String? prefix,
+    int maxLines = 1,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: PesowiseColors.white,
@@ -258,16 +315,22 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(
-            color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+          color: PesowiseColors.strong,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           hintText: hint,
           prefixText: prefix,
           prefixStyle: const TextStyle(
-              color: PesowiseColors.strong, fontWeight: FontWeight.w600),
+            color: PesowiseColors.strong,
+            fontWeight: FontWeight.w600,
+          ),
           hintStyle: const TextStyle(color: PesowiseColors.muted),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

@@ -18,4 +18,24 @@ class Wallet extends HiveObject {
 
   @HiveField(4)
   late DateTime createdAt;
+
+  @HiveField(5, defaultValue: 'cash')
+  String accountType = 'cash';
+  @HiveField(6)
+  double? creditLimit;
+  @HiveField(7)
+  double? spendingCap;
+  @HiveField(8)
+  int? dueDay;
+  @HiveField(9, defaultValue: false)
+  bool archived = false;
+
+  bool get isLiability => accountType == 'credit' || accountType == 'loan';
+  String get typeLabel => switch (accountType) {
+    'bank' => 'Bank account',
+    'ewallet' => 'E-wallet',
+    'credit' => 'Credit card',
+    'loan' => 'Loan account',
+    _ => 'Cash',
+  };
 }
